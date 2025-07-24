@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Login from './components/Login';
+import StudentDashboard from './components/StudentDashboard';
+import LibrarianDashboard from './components/LibrarianDashboard';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+const AppContent: React.FC = () => {
+  const { user, logout } = useAuth();
+
+  if (!user) {
+    return <Login />;
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="app-container">
+      <nav>
+        <h1>University Library</h1>
+        <div>
+          <span>Welcome, {user.first_name || user.username}! ({user.role})</span>
+          <button onClick={logout} style={{ marginLeft: '1rem' }}>Logout</button>
+        </div>
+      </nav>
+      <main className="dashboard">
+        {user.role === 'student' && <StudentDashboard />}
+        {user.role === 'librarian' && <LibrarianDashboard />}
+      </main>
+    </div>
+  );
+};
 
-export default App
+const App: React.FC = () => {
+  return (
+    <Router>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </Router>
+  );
+};
+
+export default App;
