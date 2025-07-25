@@ -11,6 +11,13 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       port: parseInt(env.PORT) || 3000, // Use port from .env file, or default to 3000
+      proxy: {
+        // Proxy API requests to the backend server during local development
+        '/api': {
+          target: 'http://localhost:8000',
+          changeOrigin: true,
+        },
+      },
     },
   }
 })
