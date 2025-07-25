@@ -1,8 +1,17 @@
+/**
+ * src/components/StudentDashboard.tsx
+ *
+ * This file is part of the University Library project.
+ * It defines the StudentDashboard component, which serves as the main
+ * interface for students to interact with the library system.
+ *
+ * Author: Raul Berrios
+ */
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 import BookList from './BookList';
 
-// Define types to match the backend serializers for a student's view
+/** Represents a book's details from a student's perspective. */
 interface Book {
     id: number;
     title: string;
@@ -11,19 +20,34 @@ interface Book {
     genre: string;
 }
 
+/** Represents a checkout record belonging to the current student. */
 interface MyCheckout {
     id: number;
     book: Book;
     checkout_date: string;
 }
 
+/**
+ * The main dashboard for users with the 'student' role.
+ *
+ * This component displays two main sections:
+ * 1. A list of available books for checkout, rendered by the `BookList` component.
+ * 2. A list of books currently checked out by the logged-in student.
+ *
+ * It manages fetching the student's checkout data and provides a callback
+ * to the `BookList` to refresh this data when a new book is checked out.
+ */
 const StudentDashboard: React.FC = () => {
     const [myCheckouts, setMyCheckouts] = useState<MyCheckout[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Use useCallback to create a stable function reference for fetching data.
-    // This is passed to the BookList component to trigger a refresh.
+    /**
+     * Fetches the list of books currently checked out by the logged-in student.
+     * This function is wrapped in `useCallback` to ensure it has a stable
+     * reference, allowing it to be passed as a prop to child components like
+     * `BookList` without causing unnecessary re-renders.
+     */
     const fetchMyCheckouts = useCallback(async () => {
         try {
             setLoading(true);
@@ -39,7 +63,8 @@ const StudentDashboard: React.FC = () => {
         }
     }, []);
 
-    // Fetch the student's checkouts when the component first mounts.
+    // Fetch the student's checkouts when the component first mounts. The
+    // `fetchMyCheckouts` function is included as a dependency.
     useEffect(() => {
         fetchMyCheckouts();
     }, [fetchMyCheckouts]);

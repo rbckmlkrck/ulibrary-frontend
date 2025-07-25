@@ -1,4 +1,15 @@
+/**
+ * src/components/BookList.tsx
+ *
+ * This file is part of the University Library project.
+ * It defines the BookList component, which is responsible for displaying a
+ * searchable list of available books, handling book checkouts, and
+ * communicating checkout events back to its parent component.
+ *
+ * Author: Raul Berrios
+ */
 import React, { useState, useEffect } from 'react';
+import { isAxiosError } from 'axios';
 import api from '../services/api';
 
 // Define the Book type to match the backend serializer
@@ -17,6 +28,17 @@ interface BookListProps {
     onBookCheckedOut: () => void;
 }
 
+/**
+ * Renders a list of available books from the library.
+ *
+ * This component provides a search input to filter books by title, author, or genre.
+ * It fetches book data from the API and allows users to check out a book if it is
+ * in stock. When a book is successfully checked out, it invokes the `onBookCheckedOut`
+ * callback to notify the parent component.
+ *
+ * @param {BookListProps} props - The props for the component.
+ * @param {() => void} props.onBookCheckedOut - A callback function that is called when a book is successfully checked out.
+ */
 const BookList: React.FC<BookListProps> = ({ onBookCheckedOut }) => {
     const [books, setBooks] = useState<Book[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -60,16 +82,20 @@ const BookList: React.FC<BookListProps> = ({ onBookCheckedOut }) => {
                 )
             );
             onBookCheckedOut();
-        } catch (err: any) {
-            // Make error handling user friendly
-            const data = err.response?.data;
+        } catch (err) {
             let message = 'Failed to check out book. Please try again.'; // Default message
-
-            if (data) {
-                //console.log(data);
-                message = data.detail || (data.non_field_errors && data.non_field_errors[0]) || (data.book && data.book[0]) || data || message;
+            // Use the imported isAxiosError type guard
+            if (isAxiosError(err) && err.response) {
+                const data = err.response.data;
+                // The backend provides specific error messages under these keys
+                if (data.detail) {
+                    message = data.detail;
+                } else if (data.non_field_errors && data.non_field_errors[0]) {
+                    message = data.non_field_errors[0];
+                } else if (data.book && data.book[0]) {
+                    message = data.book[0];
+                }
             }
-
             alert(`Error: ${message}`);
             console.error(err);
         }

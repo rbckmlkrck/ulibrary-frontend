@@ -1,3 +1,12 @@
+/**
+ * src/services/api.ts
+ *
+ * This file is part of the University Library project.
+ * It configures and exports a pre-configured Axios instance for making API
+ * requests to the backend.
+ *
+ * Author: Raul Berrios
+ */
 import axios from 'axios';
 
 // Create an Axios instance.

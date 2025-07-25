@@ -1,7 +1,18 @@
+/**
+ * src/components/LibrarianDashboard.tsx
+ *
+ * This file is part of the University Library project.
+ * It defines the LibrarianDashboard component, which provides an interface
+ * for librarians to manage the library's resources, including viewing active
+ * checkouts, adding new books, and creating new user accounts.
+ *
+ * Author: Raul Berrios
+ */
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 
 // Define the necessary types based on the backend serializers
+/** Represents a user, typically a student, in a checkout record. */
 interface User {
     id: number;
     username: string;
@@ -9,12 +20,14 @@ interface User {
     last_name: string;
 }
 
+/** Represents a book in a checkout record. */
 interface Book {
     id: number;
     title: string;
     author: string;
 }
 
+/** Represents a full checkout record as seen by a librarian. */
 interface Checkout {
     id: number;
     student: User;
@@ -22,7 +35,17 @@ interface Checkout {
     checkout_date: string;
 }
 
+/**
+ * The main dashboard component for users with the 'librarian' role.
+ *
+ * This component provides functionality for:
+ * - Viewing and searching a list of all active book checkouts.
+ * - Marking a checked-out book as returned.
+ * - Adding new books to the library collection via a form.
+ * - Creating new user accounts (students or librarians) via a form.
+ */
 const LibrarianDashboard: React.FC = () => {
+    // State for managing the list of active checkouts
     const [checkouts, setCheckouts] = useState<Checkout[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -51,10 +74,15 @@ const LibrarianDashboard: React.FC = () => {
             }
         };
 
+        // Debounce API calls to avoid excessive requests while typing.
         const timerId = setTimeout(() => fetchCheckouts(), 300);
         return () => clearTimeout(timerId);
     }, [searchTerm]);
 
+    /**
+     * Handles the action of marking a book as returned.
+     * @param {number} checkoutId - The ID of the checkout record to be marked as returned.
+     */
     const handleReturnBook = async (checkoutId: number) => {
         try {
             // The backend has a custom action for returning books.
@@ -68,6 +96,10 @@ const LibrarianDashboard: React.FC = () => {
         }
     };
 
+    /**
+     * Handles the form submission for adding a new book to the library.
+     * @param {React.FormEvent} e - The form submission event.
+     */
     const handleAddBook = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -84,6 +116,10 @@ const LibrarianDashboard: React.FC = () => {
         }
     };
 
+    /**
+     * Handles the form submission for creating a new user.
+     * @param {React.FormEvent} e - The form submission event.
+     */
     const handleAddUser = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
