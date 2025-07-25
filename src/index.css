@@ -1,3 +1,14 @@
+/**
+ * src/index.css
+ *
+ * This file is part of the University Library project.
+ * It contains global CSS variables and base styles for the entire application,
+ * including typography, color schemes, and default element styling.
+ *
+ * Author: Raul Berrios
+ */
+
+/* --- Global Variables and Base Styles --- */
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -13,6 +24,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* --- Element Styles --- */
 a {
   font-weight: 500;
   color: #646cff;
@@ -35,6 +47,7 @@ h1 {
   line-height: 1.1;
 }
 
+/* --- Media Queries for Color Schemes --- */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

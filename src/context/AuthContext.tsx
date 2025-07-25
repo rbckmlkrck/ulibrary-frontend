@@ -1,7 +1,19 @@
+/**
+ * src/context/AuthContext.tsx
+ *
+ * This file is part of the University Library project.
+ * It defines the authentication context for the application, providing a way
+ * to manage user state, authentication tokens, and login/logout functionality
+ * across all components.
+ *
+ * Author: Raul Berrios
+ */
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import api from '../services/api';
 
-// Define the shape of the User object based on the backend serializer
+/**
+ * Represents the structure of an authenticated user, matching the backend serializer.
+ */
 interface User {
     id: number;
     username: string;
@@ -11,7 +23,9 @@ interface User {
     role: 'student' | 'librarian';
 }
 
-// Define the shape of the context value
+/**
+ * Defines the shape of the authentication context provided to the application.
+ */
 interface AuthContextType {
     user: User | null;
     token: string | null;
@@ -20,10 +34,22 @@ interface AuthContextType {
     loading: boolean;
 }
 
-// Create the context with a default undefined value to prevent usage outside the provider
+/**
+ * The React context for authentication state.
+ * It is initialized as undefined to ensure it is only used within an `AuthProvider`.
+ */
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Custom hook for easy consumption of the context
+/**
+ * A custom hook to access the authentication context.
+ *
+ * This hook provides a convenient way to get the `user`, `token`, `login`,
+ * `logout`, and `loading` state from anywhere in the component tree that is
+ * wrapped by `AuthProvider`.
+ *
+ * @throws {Error} If used outside of an `AuthProvider`.
+ * @returns {AuthContextType} The authentication context value.
+ */
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {
@@ -36,12 +62,23 @@ interface AuthProviderProps {
     children: ReactNode;
 }
 
-// The provider component that will wrap the application
+/**
+ * Provides authentication state and functions to its children.
+ *
+ * This component manages the user's authentication status, including the auth
+ * token and user details. It handles the initial authentication check on app
+ * load and exposes `login` and `logout` functions.
+ *
+ * @param {AuthProviderProps} props - The props for the component.
+ * @param {ReactNode} props.children - The child components to be rendered within the provider.
+ */
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true); // To handle initial auth check
 
+    // This effect runs on initial load and whenever the token changes.
+    // It attempts to authenticate the user if a token is present in local storage.
     useEffect(() => {
         const initializeAuth = async () => {
             if (token) {
@@ -65,7 +102,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         initializeAuth();
     }, [token]);
 
-    // Perform the login logic, setting the token in local storage and fetching the userresponse 
+    /**
+     * Logs in a user with the given credentials.
+     * On success, it stores the auth token, sets the user state, and configures
+     * the API client with the new token.
+     * @param {string} username - The user's username.
+     * @param {string} password - The user's password.
+     */
     const login = async (username: string, password: string) => {
         const response = await api.post<{ token: string }>('/token-auth/', { username, password });
         const new_token = response.data.token;
@@ -76,6 +119,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(userResponse.data);
     };
 
+    /**
+     * Logs out the current user.
+     * It clears the user state, removes the token from local storage, and
+     * removes the authorization header from the API client.
+     */
     const logout = () => {
         setUser(null);
         setToken(null);

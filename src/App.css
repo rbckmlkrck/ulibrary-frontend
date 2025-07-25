@@ -1,3 +1,14 @@
+/**
+ * src/App.css
+ *
+ * This file is part of the University Library project.
+ * It contains the main stylesheet for the application, defining the layout,
+ * component styles, and overall theme.
+ *
+ * Author: Raul Berrios
+ */
+
+/* --- Root and Global Styles --- */
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,6 +16,7 @@
   text-align: center;
 }
 
+/* --- Main App Layout --- */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -29,6 +41,7 @@ nav button {
   background-color: #dc3545;
 }
 
+/* --- Dashboard --- */
 .dashboard {
   width: 100%;
   display: flex;
@@ -40,6 +53,7 @@ nav button {
   text-align: left;
 }
 
+/* --- Forms --- */
 .form-container {
   display: flex;
   flex-direction: column;
@@ -90,6 +104,7 @@ button:hover {
   border-color: #646cff;
 }
 
+/* --- Lists (Books, Users, Checkouts) --- */
 .book-list, .user-list, .checkout-list {
   list-style: none;
   padding: 0;
@@ -107,6 +122,7 @@ button:hover {
   background-color: #2a2a2a;
 }
 
+/* --- Utility --- */
 .error-message {
   color: #dc3545;
   margin-top: 1rem;

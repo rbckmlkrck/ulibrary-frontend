@@ -1,13 +1,32 @@
+/**
+ * src/components/Login.tsx
+ *
+ * This file is part of the University Library project.
+ * It defines the Login component, which provides the user interface for
+ * authentication.
+ *
+ * Author: Raul Berrios
+ */
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
+/**
+ * Renders a login form for user authentication.
+ *
+ * This component captures username and password inputs and uses the `useAuth`
+ * context to perform the login operation. It handles loading states and
+ * displays error messages for failed login attempts.
+ */
 const Login: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
-
+    /**
+     * Handles the form submission event for logging in.
+     * @param {React.FormEvent} e - The form submission event.
+     */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);

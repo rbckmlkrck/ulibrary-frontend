@@ -1,4 +1,14 @@
 # Makefile for the University Library Frontend
+##
+# frontend/Makefile.mk
+#
+# This file is part of the University Library project.
+# It provides Makefile commands to simplify common development tasks for the
+# frontend application, such as installing dependencies, building for
+# production, and cleaning the project directory.
+#
+# Author: Raul Berrios
+##
 
 .PHONY: all clean build install
 

@@ -1,3 +1,12 @@
+/**
+ * src/index.tsx
+ *
+ * This file is part of the University Library project.
+ * It serves as the main entry point for the React application,
+ * responsible for rendering the root `App` component into the DOM.
+ *
+ * Author: Raul Berrios
+ */
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'

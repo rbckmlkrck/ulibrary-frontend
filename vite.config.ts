@@ -1,3 +1,12 @@
+/**
+ * vite.config.ts
+ *
+ * This file is part of the University Library project.
+ * It configures the Vite development server for the frontend application,
+ * including server port, plugins, and proxy settings for API requests.
+ *
+ * Author: Raul Berrios
+ */
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
