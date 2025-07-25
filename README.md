@@ -25,9 +25,8 @@ Before starting the frontend, ensure the [backend API server](../backend/README.
     ```.env
     # frontend/.env
     PORT=3000
-    VITE_API_URL=http://localhost:8000/api
     ```
-    **Note:** The `PORT` is read by the `vite.config.ts` file. Only variables prefixed with `VITE_` are exposed to your client-side application code.
+    **Note:** The `PORT` is read by the `vite.config.ts` file. API requests are proxied to the backend via the Vite dev server (for local development) or Nginx (in Docker).
 
 3.  **Install dependencies:**
     This will install all the necessary packages defined in `package.json`.
@@ -36,7 +35,7 @@ Before starting the frontend, ensure the [backend API server](../backend/README.
     ```
 
 4.  **Run the development server:**
-    This command starts the Vite development server, which features Hot Module Replacement (HMR) for a fast development experience. It will use the `VITE_API_URL` from your `.env` file to connect to the backend.
+    This command starts the Vite development server, which features Hot Module Replacement (HMR) for a fast development experience. It will proxy API requests to the backend as configured in `vite.config.ts`.
     ```bash
     npm run dev
     ```

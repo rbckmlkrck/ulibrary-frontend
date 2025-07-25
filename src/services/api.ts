@@ -1,12 +1,10 @@
 import axios from 'axios';
 
-// Access the environment variable from Vite, with a fallback for safety.
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-
-// Create an Axios instance with a pre-configured base URL.
-// This is the single point of configuration for all API requests.
+// Create an Axios instance.
+// By using a relative baseURL, all requests will be sent to the same host
+// that served the frontend. Nginx will then proxy the API requests.
 const api = axios.create({
-  baseURL: baseURL,
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
