@@ -32,6 +32,7 @@ interface AuthContextType {
     login: (username: string, password: string) => Promise<void>;
     logout: () => void;
     loading: boolean;
+    error: string | null;
 }
 
 /**
@@ -76,6 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true); // To handle initial auth check
+    const [error, setError] = useState<string | null>(null);
 
     // This effect runs on initial load and whenever the token changes.
     // It attempts to authenticate the user if a token is present in local storage.
@@ -110,13 +112,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
      * @param {string} password - The user's password.
      */
     const login = async (username: string, password: string) => {
-        const response = await api.post<{ token: string }>('/token-auth/', { username, password });
-        const new_token = response.data.token;
-        localStorage.setItem('token', new_token);
-        setToken(new_token);
-        api.defaults.headers.common['Authorization'] = `Token ${new_token}`;
-        const userResponse = await api.get('/me/');
-        setUser(userResponse.data);
+        setError(null); // Clear previous errors
+        try {
+            const response = await api.post<{ token: string }>('token-auth/', { username, password });
+            const new_token = response.data.token;
+            localStorage.setItem('token', new_token);
+            setToken(new_token);
+            api.defaults.headers.common['Authorization'] = `Token ${new_token}`;
+            const userResponse = await api.get('/me/');
+            setUser(userResponse.data);
+        } catch (err: any) {
+            const errorMessage = 
+                err.response?.data?.non_field_errors?.[0] || 
+                'Login failed. Please check your credentials and try again.';
+            console.error("Login failed:", err);
+            setError(errorMessage);
+            // Re-throw the error so the calling component knows the login failed
+            throw new Error(errorMessage);
+        }
     };
 
     /**
@@ -131,7 +144,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         delete api.defaults.headers.common['Authorization'];
     };
 
-    const value = { user, token, login, logout, loading };
+    const value = { user, token, login, logout, loading, error };
 
     // Don't render children until the initial token check is complete
     return (
