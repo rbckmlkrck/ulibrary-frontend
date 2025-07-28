@@ -9,7 +9,6 @@ interface Book {
     published_year: number;
     genre: string;
     stock: number;
-    available_stock: number;
     is_checked_out_by_user: boolean;
     available: number;
     checked_out_count: number;
@@ -73,7 +72,7 @@ const AvailableBooks: React.FC = () => {
             setBooks(prevBooks =>
                 prevBooks.map(b =>
                     b.id === bookId
-                        ? { ...b, available_stock: b.available_stock - 1, is_checked_out_by_user: true }
+                        ? { ...b, available: b.available - 1, is_checked_out_by_user: true }
                         : b
                 )
             );
@@ -136,7 +135,7 @@ const AvailableBooks: React.FC = () => {
                                                         (document.getElementById('checkout_modal') as HTMLDialogElement)?.showModal();
                                                     }}
                                                     className="btn btn-primary btn-sm"
-                                                    disabled={book.available_stock === 0 || book.is_checked_out_by_user}
+                                                    disabled={book.available === 0 || book.is_checked_out_by_user}
                                                 >
                                                     {book.is_checked_out_by_user ? 'Checked Out' : 'Checkout'}
                                                 </button>
@@ -169,7 +168,7 @@ const AvailableBooks: React.FC = () => {
             <dialog id="checkout_modal" className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">Confirm Checkout</h3>
-                    <p className="py-4">Are you sure you want to checkout "<strong>{selectedBook?.title}</strong>"? ({selectedBook?.stock ?? 0} available)</p>
+                    <p className="py-4">Are you sure you want to checkout "<strong>{selectedBook?.title}</strong>"? ({selectedBook?.available ?? 0} available)</p>
                     <div className="modal-action">
                         <form method="dialog">
                             <button className="btn mr-2" onClick={() => setSelectedBook(null)}>Cancel</button>
