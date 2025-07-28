@@ -1,6 +1,6 @@
 # University Library - Frontend
 
-This is the frontend for the University Library system, built with React, TypeScript, and Vite.
+This is the frontend for the University Library system, built with React, TypeScript, and Vite. It uses [Tailwind CSS](https://tailwindcss.com/) and [daisyUI](https://daisyui.com/) for a clean, modern, and themeable user interface.
 
 ## Features
 
@@ -8,6 +8,7 @@ This is the frontend for the University Library system, built with React, TypeSc
 -   Login functionality to access role-specific dashboards.
 -   Students can browse, search, and filter books.
 -   Students can request to check out available books and view their current checkouts.
+-   Styled with a rich set of components and themes provided by daisyUI.
 -   Librarians can manage users and books.
 -   Librarians can view all active checkouts and mark books as returned.
 
@@ -33,6 +34,7 @@ Before starting the frontend, ensure the [backend API server](../backend/README.
     ```bash
     npm install
     ```
+    **Styling Note:** This project uses Tailwind CSS and the daisyUI plugin. The configuration for both, including themes, can be found in `tailwind.config.js`.
 
 4.  **Run the development server:**
     This command starts the Vite development server, which features Hot Module Replacement (HMR) for a fast development experience. It will proxy API requests to the backend as configured in `vite.config.ts`.

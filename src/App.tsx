@@ -1,50 +1,64 @@
 /**
  * src/App.tsx
  *
- * This file is part of the University Library project.
- * It defines the main application component, orchestrating the overall layout,
- * routing, and authentication-based content display.
+ * This file is part of the University Library project. It defines the main
+ * application component, orchestrating the overall layout, routing, and
+ * authentication-based content display.
  *
  * Author: Raul Berrios
  */
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Login from './components/Login';
-import StudentDashboard from './components/StudentDashboard';
-import LibrarianDashboard from './components/LibrarianDashboard';
-import './App.css';
+import MainLayout from './components/layout/MainLayout';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Librarian Pages
+import ActiveCheckouts from './pages/librarian/ActiveCheckouts';
+import BookInventory from './pages/librarian/BookInventory';
+import Management from './pages/librarian/Management';
+
+// Student Pages
+import AvailableBooks from './pages/student/AvailableBooks';
+import MyCheckouts from './pages/student/MyCheckouts';
 
 /**
- * Renders the main content of the application based on authentication status.
- *
- * If a user is not authenticated, it displays the `Login` component.
- * Once authenticated, it shows the appropriate dashboard (`StudentDashboard` or
- * `LibrarianDashboard`) based on the user's role. It also includes a
- * navigation bar with a welcome message and a logout button.
- *
- * This component must be rendered within an `AuthProvider` to access user context.
+ * Defines the application's routes and handles rendering based on
+ * authentication state and user role.
  */
-const AppContent: React.FC = () => {
-  const { user, logout } = useAuth();
-
-  if (!user) {
-    return <Login />;
-  }
+const AppRoutes: React.FC = () => {
+  const { user } = useAuth();
 
   return (
-    <div className="app-container">
-      <nav>
-        <h1>University Library</h1>
-        <div>
-          <span>Welcome, {user.first_name || user.username}! ({user.role})</span>
-          <button onClick={logout} style={{ marginLeft: '1rem' }}>Logout</button>
-        </div>
-      </nav>
-      <main className="dashboard">
-        {user.role === 'student' && <StudentDashboard />}
-        {user.role === 'librarian' && <LibrarianDashboard />}
-      </main>
-    </div>
+    <Routes>
+      <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" replace />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }
+      >
+        {user?.role === 'librarian' ? (
+          <>
+            <Route index element={<Navigate to="checkouts" replace />} />
+            <Route path="checkouts" element={<ActiveCheckouts />} />
+            <Route path="inventory" element={<BookInventory />} />
+            <Route path="management" element={<Management />} />
+          </>
+        ) : (
+          <>
+            <Route index element={<Navigate to="books" replace />} />
+            <Route path="books" element={<AvailableBooks />} />
+            <Route path="my-checkouts" element={<MyCheckouts />} />
+          </>
+        )}
+      </Route>
+      {/* Redirect any unknown paths to the appropriate starting page */}
+      <Route path="*" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />
+    </Routes>
   );
 };
 
@@ -59,7 +73,9 @@ const App: React.FC = () => {
   return (
     <Router>
       <AuthProvider>
-        <AppContent />
+        <ThemeProvider>
+          <AppRoutes />
+        </ThemeProvider>
       </AuthProvider>
     </Router>
   );
